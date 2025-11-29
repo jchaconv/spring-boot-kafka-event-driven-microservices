@@ -1,0 +1,130 @@
+
+Course: Apache Kafka for Event-Driven Spring Boot Microservices
+
+Start: 28/11/2025
+
+
+****************************************
+Section 1: Introduction to Apache Kafka
+****************************************
+
+- What is a Microservice?
+    - Small autonomous application, that is usually designed to perform a one specific
+      business functionality.
+    - Responsible for specific functionality (Search, Email Notification, SMS Notification).
+    - Loosely coupled, designed to scale and work in the cloud.
+
+- Communication between Microservices.
+    - It is performed by HTTP Requests in sync or async mode.
+
+- Event-Driven Architecture: to send a message to differente applications at the same time.
+
+
+
+
+********************************
+Section 2: Apache Kafka Brokers
+********************************
+
+
+- Start single Apache Kafka broker with KRaft
+
+    - docs: https://www.confluent.io/blog/set-up-and-run-kafka-on-windows-linux-wsl-2/
+
+    - Clean up:
+        
+        rm -rf /tmp/kafka-logs /tmp/zookeeper /tmp/kraft-combined-logs
+
+    - KAFKA_CLUSTER_ID="$(bin/kafka-storage.sh random-uuid)"
+    - echo $KAFKA_CLUSTER_ID
+    - bin/kafka-storage.sh format -t $KAFKA_CLUSTER_ID -c config/kraft/server.properties
+    - bin/kafka-server-start.sh config/kraft/server.properties
+
+
+* Don't use this configuration to avoid issues.
+
+- Multiple Kafka broker: Configuration Files (Multiple servers in a single cluster)
+    - /config/kraft/
+    - make copies of server.properties (server-1.properties, server-2.properties)
+    - On server-2.properties
+        - node.id=2
+        - listeners=PLAINTEXT://:9094,CONTROLLER://:9095 
+        - controller.quorum.voters=1@localhost:9093,2@localhost:9095  (do the same in server-1, the same entire value)
+        - advertised.listeners=PLAINTEXT://localhost:9094
+        - log.dirs=/tmp/server-2/kraft-combined-logs (do similar to server-1)
+
+- Multiple Kafka broker: Storage folders
+    - bin/kafka-storage.sh random-uuid
+    - bin/kafka-storage.sh format -t dw6Kk_63Qrab_bN87YRAvg -c config/kraft/server-1.properties
+    - bin/kafka-storage.sh format -t dw6Kk_63Qrab_bN87YRAvg -c config/kraft/server-2.properties   ---> is the same key as server-1
+
+
+- Starting multiple Kafka broker with KRaft
+    - bin/kafka-server-start.sh config/kraft/server-1.properties
+    - bin/kafka-server-start.sh config/kraft/server-2.properties
+    - see the logs, no errors, and the reference of the nodes.
+
+- Stop Producers and Consumers
+    - avoid losing messages and errors.
+    - bin/kafka-server-stop.sh ---> graceful shutdown, better then control+c (2 servers down automatically)
+
+-------------------------------------
+
+
+*****************************
+Section 3: Kafka CLI: Topics
+*****************************
+
+    - start both brokers in the cluster.
+
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092,localhost:9094 --create --topic topic1 --partitions 3 --replication-factor 2
+
+        - Number of partitions should be the same of number of consumers.
+        - replication factor: how many copies of each partition are store across of different servers. fault tolerance.
+          data available even if a broker fails. this number cannot be greater than the number of brokers in the cluster.
+    
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092,localhost:9094 --create --topic topic2 --partitions 3 --replication-factor 2
+
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe
+
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic topic1
+
+
+
+********************************
+Section 4: Kafka CLI: Producers
+********************************
+
+    - Send a message with or without a Key.
+    - Send multiple messages from a file.
+
+    - Use only one server
+
+    - Without a key
+
+        - bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic topic3
+
+            - if the topic doesn't exist it will be created automatically
+        
+    - Key:Value Pair
+
+        - bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic topic4 --property "parse.key=true" --property "key.separator=:"
+
+            - firstName:Julio
+            - other format throws an error
+
+
+
+
+
+
+
+
+
+
+
+
+
+
