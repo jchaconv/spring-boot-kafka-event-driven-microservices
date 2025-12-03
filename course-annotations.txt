@@ -117,14 +117,61 @@ Section 4: Kafka CLI: Producers
 
 
 
+********************************
+Section 5: Kafka CLI: Consumers
+********************************
 
+    - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic --from-beginning
+    - the message still alive in the topic after it was read
+    - one or more consumers can see the messages from the topic
 
+    - Consuming new messages only
+        - enter the command without the --from-beginning option
+    
+    - Consuming Key:Value pair messages from Kafka topic
+        
+        - bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic my-topic --property "parse.key=true" --property "key.separator=:"
 
+        - I need to add the print.key property, otherwise I just received the value
 
+            - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic --from-beginning --property print.key=true
 
+        - I also can print the value or not
 
+            - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic my-topic --from-beginning --property print.key=true --property print.value=false
 
+    - Consuming Kafka messages in order
 
+        Messages with the same key are ordered in the same partition but the others are distributed across different partitions and there is no guarantee of order.
 
+        - bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic messages-order --partitions 3 --replication-factor 2
 
+        - bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic messages-order --property "parse.key=true" --property "key.separator=:"
 
+            >1:message1
+            >1:message2
+            >1:message3
+            >1:message4
+            >1:message5
+            >a:a
+            >b:b
+            >c:c
+            >d:d
+            >e:e
+            >f:f
+            >g:g
+
+        - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic messages-order --from-beginning --property print.key=true --property print.value=true
+
+            a       a
+            c       c
+            b       b
+            d       d
+            e       e
+            1       message1
+            1       message2
+            1       message3
+            1       message4
+            1       message5
+            f       f
+            g       g            
