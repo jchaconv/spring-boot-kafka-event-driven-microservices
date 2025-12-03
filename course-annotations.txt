@@ -175,3 +175,44 @@ Section 5: Kafka CLI: Consumers
             1       message5
             f       f
             g       g            
+
+
+****************************************************
+Section 5: Kafka Producer - Spring Boot Microservice
+****************************************************
+
+branch: feature/section5-kafka-producer-microservice
+
+    - Create new project
+        - com.vilelo.ws
+        - products-microservice
+        - package: products
+        - java 17
+        - dependency: web, spring for kafka
+
+    - add jackson dependency
+
+    - configs on properties
+        - server.port=0  ---> takes a random port
+        - the correct key is just kafka server not producer server. 
+
+    - create KafkaConfig, I don't use the replicas because I only have 1 server
+
+    - for the wsl use: ip addr show
+        - use the eth0
+
+    - edit server.properties with this:
+        listeners=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+        advertised.listeners=PLAINTEXT://172.30.84.55:9092
+
+    - terminate the code (controller, service, config, model)
+        - use join() if you want to wait confirmation from kafka
+
+    - use a consumer:
+        - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic --property print.key=true --property print.value=true
+
+    - test successful
+        - kafka console: fbfd8ab3-55e4-4c91-98cd-df0eda942a87    {"productId":"fbfd8ab3-55e4-4c91-98cd-df0eda942a87","title":"iPhone 13","price":1700,"quantity":1}
+        - even the logs are correct (async communication):
+            - first : *********** Returning product id   (at the final of the method)
+            - and then: *********** Message sent successfully
