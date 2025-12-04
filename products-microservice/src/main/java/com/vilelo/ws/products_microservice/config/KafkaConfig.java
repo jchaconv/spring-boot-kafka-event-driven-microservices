@@ -1,6 +1,6 @@
 package com.vilelo.ws.products_microservice.config;
 
-import com.vilelo.ws.products_microservice.service.ProductCreatedEvent;
+import com.vilelo.ws.core.ProductCreatedEvent;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;

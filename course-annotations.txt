@@ -375,9 +375,39 @@ the topic has a specified number of partitions and each partition can be readed 
 
 --------------------
 
+- Configs
+    - properties
+        - trusted.packages=*   ---> to accept any package
+        - I don't like tu use JsonDeserializer because is deprecated
 
+    - listener
+        - @KafkaListener accepts multiple topics
 
+--------------------
 
+Create the core project
+    - com.vilelo.ws
+    - core
+    - package: com.vilelo.ws.core
+    - java 17
+    - no dependency
+
+Config:
+    - delete build section of the pom
+    - delete dependencies of the pom
+    - delete main app file and the test
+    - create the ProductCreatedEvent class
+    - copy the three important values to import as a depedency in other project
+        
+        <groupId>com.vilelo.ws</groupId>
+	    <artifactId>core</artifactId>
+	    <version>0.0.1-SNAPSHOT</version>
+    
+    - mvn clean install  --> core
+    - add as a dependency in products-microservice
+    - do the same to email-notification-microservice
+
+------------------------
 
 
 

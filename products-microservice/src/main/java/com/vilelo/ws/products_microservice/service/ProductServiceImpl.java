@@ -1,5 +1,6 @@
 package com.vilelo.ws.products_microservice.service;
 
+import com.vilelo.ws.core.ProductCreatedEvent;
 import com.vilelo.ws.products_microservice.rest.CreateProductRestModel;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -8,8 +9,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
+
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
