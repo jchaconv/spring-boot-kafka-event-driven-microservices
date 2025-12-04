@@ -313,6 +313,42 @@ branch: feature/section7-kafka-producer-retries
 
 
 
+****************************************
+Section 8: Idempotent Producer in Kafka
+****************************************
+
+branch: feature/section8-idempotent-kafka-producer
+
+- Happy path:
+    - a producer sends a message to the broker
+    - the broker store the message in the topic
+    - the broker send acknowledgement to the producer
+
+- a possible escenario can be a network connection error taking place
+  and the acknowledgement could not reach the producer.
+    - so, the producer retry send the same message to the broker.
+    - (*) the broker stores the message again.
+    - the broker sends acknowledgement to the producer again and this time it was succesful.
+    - the problem here is the duplicate same message in the kafka topic.
+        - maybe not a big problem, but if it is a banking application it is a huge problem
+        - products can be charged two times in a client account
+        - to avoid this problem you need to make the producer IDEMPOTENT
 
 
+Idempotent producer:
+    - avoids duplicate message in the log in the presence of failure and retries.
+    - it means that the producer can send the message multiple times but kafka broker will only store at once
+      and keep it in the correct order.
+    - this feature prevent inconsistency in the topic, even if there are problems with the network or server.
+    - (*) with idempotent producer the message won't be store again in the topic. The broker just send the
+       acknowledgement to the producer.
+    
+    - spring.kafka.producer.properties.enable.idempotence=true   ---> good idea to declare this. by default is active.
 
+    - ConfigException
+        - if I use acks=all there will by
+        - spring.kafka.producer.properties.max.in.flight.request.per.connection=5    ---> items sent at the same time
+    
+    - 
+    
+    - 
