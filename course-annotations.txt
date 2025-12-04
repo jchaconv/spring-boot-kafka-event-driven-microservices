@@ -178,7 +178,7 @@ Section 5: Kafka CLI: Consumers
 
 
 ****************************************************
-Section 5: Kafka Producer - Spring Boot Microservice
+Section 6: Kafka Producer - Spring Boot Microservice
 ****************************************************
 
 branch: feature/section5-kafka-producer-microservice
@@ -198,6 +198,8 @@ branch: feature/section5-kafka-producer-microservice
 
     - create KafkaConfig, I don't use the replicas because I only have 1 server
 
+    - test connection with the wsl: Test-NetConnection -ComputerName 172.30.84.55 -Port 9092
+
     - for the wsl use: ip addr show
         - use the eth0
 
@@ -209,10 +211,51 @@ branch: feature/section5-kafka-producer-microservice
         - use join() if you want to wait confirmation from kafka
 
     - use a consumer:
-        - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic --property print.key=true --property print.value=true
+        - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic --property print.key=true
 
     - test successful
         - kafka console: fbfd8ab3-55e4-4c91-98cd-df0eda942a87    {"productId":"fbfd8ab3-55e4-4c91-98cd-df0eda942a87","title":"iPhone 13","price":1700,"quantity":1}
         - even the logs are correct (async communication):
             - first : *********** Returning product id   (at the final of the method)
             - and then: *********** Message sent successfully
+
+
+    - Kafka Producer: Send Message Synchronously
+
+        - i tested future.join() is not working, the consumer didn't catch the message
+        - edit serviceImpl using get()
+        - edit the controller to handle the exception
+
+
+---------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
