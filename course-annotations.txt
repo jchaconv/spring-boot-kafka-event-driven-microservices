@@ -230,29 +230,86 @@ branch: feature/section5-kafka-producer-microservice
 ---------------------------------------------------
 
 
+*******************************************************
+Section 7: Kafka Producer - Acknowledgements & Retries
+*******************************************************
 
 
+branch: feature/section7-kafka-producer-retries
+
+    Acknowledgements:
+
+    - spring.kafka.producer.acks=all    ---> waits for acknowledgements from all brokers. it ensures higher data durability by requiring acknowledgement from all
+                                             in-sync replicas.
+
+    - spring.kafka.producer.acks=1    ---> waits for acknowledgements from leader broker
+
+        - the acknowledgement level required from the kafka cluster for successful message delivery
+    
+    - complement with:
+        --replication-factor=5
+        --config min.insync.replicas=2
+
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic insync-topic1 --partitions 3 --replication-factor 3 --config min.insync.replicas=2
+
+    - bin/kafka-configs.sh --bootstrap-server localhost:9092 --alter --entity-type topics --entity-name topic2 --add-config min.insync.replicas=2
+
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe
+
+    Retries:
+
+    - spring.kafka.producer.retries=10   ---> times kafka will try to send a message
+    - spring.kafka.producer.properties.retry.backoff.ms=1000  ---> how long the producer wil wait  before attempting to retry
+    - spring.kafka.producer.properties.delivery.timeout.ms=120000 ---> (2minutes) max time producer can spend trying to deliver the message
+    
+    - spring.kafka.producer.properties.linger.ms=0   ---> max time in milliseconds that the producer will wait and buffer data before sending a batch of messages. default value is 0.
+    - spring.kafka.producer.properties.request.timeout.ms=30000 ---> (30 secs) max time to wait for a response from the broker after sending a request. default value is 30000ms
 
 
+    Example:
 
+        - with the consumer in place with the insync property
+        - first try this:
+            - spring.kafka.producer.acks=all
+            - start 3 servers and shut down one by one
+            - when you have only one server active Kafka throws an exception
+        - then:
+            - add these:
+                - spring.kafka.producer.retries=10
+                - spring.kafka.producer.properties.retry.backoff.ms=1000
+            - do the same as before
+            - when you have only one server it will be retries every second
+            - check the logs
 
+    --------------
 
+    Kafka Producer Delivery & Request Timeout
+    Trying how Kafka Producer Delivery & Request Timeout works
 
+        - comment the last two properties (retries and backoff.ms)
+        - add these:
+            - spring.kafka.producer.properties.delivery.timeout.ms=120000
+            - spring.kafka.producer.properties.linger.ms=0
+            - spring.kafka.producer.properties.request.timeout.ms=30000
 
+        - also with 3 brokers and shut down one by one
+        - when I have only one broker and send the request from postman
+        - there will be multiple retries until the timeoutexception will be thrown
 
+    ----------------
 
+    Kafka Producer Spring Bean Configuration
 
+        - Edit KafkaConfig adding producerCOnfigs(), producerFactory and kafkaTemplate methods
+        - for now no need to add all properties like acks, deliveryTimeout, etc
+        - just the necessaries as servers, key and value serializer
+        - i test the new config with necessaries properties
 
+            - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic --property print.key=true
 
-
-
-
-
-
-
-
-
-
+        - "Invalid value {spring.kafka.producer.acks} for configuration acks: String must be one of: all, -1, 0, 1",
+        - so in this case, acks property needs to be properly defined. I just commented that unnecessary code for now.
+        - test successful
 
 
 
