@@ -349,6 +349,40 @@ Idempotent producer:
         - if I use acks=all there will by
         - spring.kafka.producer.properties.max.in.flight.request.per.connection=5    ---> items sent at the same time
     
-    - 
-    
-    - 
+
+
+
+*****************************************************
+Section 9: Kafka Consumer - Spring Boot Microservice
+*****************************************************
+
+branch: feature/section9-kafka-consumer
+
+the topic has a specified number of partitions and each partition can be readed by one consumer.
+
+- New service to read a message from a topic.
+- when a spring boot application read a message from the topic that message still remains in the topic. until it will be deleted automatically (168hrs).
+- so, it is possible to have multiple and different consumers like different applications. SMS Notification, Email Notification, Push Notification microservices.
+
+--------------------
+
+- Create new project
+    - com.vilelo.ws
+    - email-notification-microservice
+    - package: com.vilelo.ws.emailnotification
+    - java 17
+    - dependency: web, spring for kafka, lombok
+
+--------------------
+
+
+
+
+
+
+
+
+
+
+
+
