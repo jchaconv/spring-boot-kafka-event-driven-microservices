@@ -373,6 +373,8 @@ the topic has a specified number of partitions and each partition can be readed 
     - java 17
     - dependency: web, spring for kafka, lombok
 
+    - add jackson dependency  ---> to avoid a KafkaException
+
 --------------------
 
 - Configs
@@ -409,7 +411,12 @@ Config:
 
 ------------------------
 
+@KafkaHandler: Trying how it works
 
+    - run products-microservice
+    - run email-notification-microservice
+    - the test was succesful. I use product service as a producer
+      and the message was received by email-notification-service.
 
 
 
