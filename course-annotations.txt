@@ -479,8 +479,13 @@ that can be consumed as bad messages to analyze those messages.
 - also configure producerFactory as a bean.
 - I used classes from jackson because jsonserialzer is deprecated.
 
+- start both products and emai-notification services
+
 - bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic --property "parse.key=true" --property "key.separator=:"
 - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic-dlt --from-beginning
+
+- send correct json format from product-service
+- send bad message from the producer console as this:  1:{juliochacon}
 
 - base64 decode(go to the web browser to do this operation). take the value inside ""
 
