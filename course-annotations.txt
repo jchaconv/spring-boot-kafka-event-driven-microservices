@@ -482,7 +482,7 @@ that can be consumed as bad messages to analyze those messages.
 - bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic --property "parse.key=true" --property "key.separator=:"
 - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic-dlt --from-beginning
 
-- base64 decode. take the value inside ""
+- base64 decode(go to the web browser to do this operation). take the value inside ""
 
 - the test was successful
 
