@@ -418,8 +418,15 @@ Config:
     - the test was succesful. I use product service as a producer
       and the message was received by email-notification-service.
 
+------------------------
 
+ConsumerFactory Bean Configuration
+Kafka Listener Container Factory
 
+    - i don't use ther spring Value annotation to get a value from properties file
+    - i use Environment class to get values, delete unnecessary properties
+    - i also use jacksonjsondeserializer as an updated alternative for DESERIALIZATION
 
-
-
+    - ConsumerFactory   --> provides the necessary configuration
+    - ConcurrentKafkaListenerContainerFactory  ---> Create a Kafka container and a kafka listener
+    - the test was succesful with the new configurations
