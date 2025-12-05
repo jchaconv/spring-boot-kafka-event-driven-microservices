@@ -430,3 +430,34 @@ Kafka Listener Container Factory
     - ConsumerFactory   --> provides the necessary configuration
     - ConcurrentKafkaListenerContainerFactory  ---> Create a Kafka container and a kafka listener
     - the test was succesful with the new configurations
+
+
+*******************************************************
+Section 10: Kafka Consumer - Handle Deserializer Errors
+*******************************************************
+
+branch: feature/section9-kafka-consumer-handle-deserializer-errors
+
+    - If I have a JSON Deserializer in my email-notification-service, then If I received a String Serializer
+      there will be an error and my consumer is not prepared to handle this.
+
+    - Causing the problem:
+
+        - start the mail service
+        - start a producer with the console
+            - bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic --property "parse.key=true" --property "key.separator=:"
+        - send an invalid message (not json format)
+            - hola:mundox
+        - the application is stuck, making impossible to handle other messages
+          this is the poison pill effect.
+        
+    - Kafka Consumer ErrorHandlingDeserializer
+
+        - Edit the consumer configuration by using ErrorHandlingDeserializer. the fields(2) were added.
+        - when I start the app again, the error was thrown only one time, without send another message.
+        - I tested this sending invalid message from the console and a correct message from the products-service
+          and the exception was thrown only one time, it means the service handle it correctly.
+
+-----------------------------------------
+
+
