@@ -460,4 +460,29 @@ branch: feature/section9-kafka-consumer-handle-deserializer-errors
 
 -----------------------------------------
 
+*******************************************************
+Section 11: Kafka Consumer - Dead Letter Topic (DLT)
+*******************************************************
+
+branch: feature/section11-kafka-consumer-dlt
+
+DLT:
+
+- if the service receive an invalid message, then it can be redirect to another topic
+that can be consumed as bad messages to analyze those messages.
+
+- edit the consumer configuration specifically the kafkaListenerContainerFactory method
+
+- there is no dlt name specified. the default value is the same as the kafka listener definition + -dlt
+
+- Configure kafkaTemplate as a bean in consumer configuration class
+- also configure producerFactory as a bean.
+- I used classes from jackson because jsonserialzer is deprecated.
+
+- bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic --property "parse.key=true" --property "key.separator=:"
+- bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic-dlt --from-beginning
+
+- base64 decode. take the value inside ""
+
+- the test was successful
 
