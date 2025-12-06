@@ -522,3 +522,100 @@ branch: feature/section12-kafka-consumer-exceptions-retries
         - tests were successful
 
     
+********************************************************************
+Section 13: Kafka Consumer - Multiple Consumers in a Consumer Group
+********************************************************************
+
+branch: feature/section13-kafka-consumer-multiple-consumers-cg
+
+Intro to Kafka Consumer Groups:
+
+- I have three consumers listening to a topic (Email, SMS, Push notification services)
+- The producer sends a message to the topic and that specific message is received by each service.
+- Imagine that I need to scale up to three instances of Email Notification Service. The message emitted by the topic will be processed
+  three times? One time for each instance?
+- The answer is no, If I group the specific instances of the service in a "Consumer Group" then the message will be processed
+  only one time by one specific instance.
+
+- Kafka sends the message to only one consumer in the consumer group.
+
+-------------
+
+Rebalancing and Partition Assignment in Apache Kafka
+
+    - If my topic has three partitions and my Consumer Group has four consumers(four service instances)
+      the instance number 4 will be idle. I cannot have more consumers than number of partitions, because the extra consumer(s) will be idle.
+
+    -  Every consumer in the consumer-group sends a heart beat or a signal every 3 secs by default and can be configured.
+       This signal lets know to the Kafka broker that can consume new messages.
+
+    - If a consumer stops sending signals to the broker, then the broker delete it from the consumer group and start the rebalancing.
+      This means that the rest of available consumers in the consumer-group will consume the messages of all the partitions in the topic.
+
+-------------
+
+Assigning Microservice to a consumer group in Kafka
+
+    - the configuration was already set in the properties file and ConsumerConfiguration class.
+    - change to this in both files: consumer.group-id=product-created-events 
+
+-------------
+
+
+Starting up more Microservices
+Trying how partitions assignment works in Kafka
+
+    - set server.port=0 to get a random port
+    - start 3 instances of email notif service
+    - when you start the instances one by one you can see the rebalancing in the application logs
+    - kafka assign three topics to the first available instance
+    - then kafka rebalance the topics to the next available instance and so on.
+
+        KafkaMessageListenerContainer: product-created-events:
+            partitions assigned: [
+                product-created-events-topic-0,
+                product-created-events-topic-1,
+                product-created-events-topic-2
+            ]
+
+-------------
+
+Multiple consumers consuming messages from Kafka topic
+
+    - in the handler add producId to the logs
+    - start all the services and see the behavior of kafka and the processing of the messages in the consumer-group
+    - mvn spring-boot:run
+
+    - to check resources in kafka before and during the tests:
+
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+
+    - bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list
+        product-created-events
+
+    - bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe
+        - shows the product-created-events-topic with three partitions set by the product-microservice
+    
+    - send a request with product-microservice 
+
+    - the message was processed only by one instance:
+
+        product-created-events: partitions assigned: [product-created-events-topic-0]
+        Received a new event: iPad pro 15 with productId: ea9feea8-60c6-44b7-98ce-ef42ed8f0c03
+
+    - the test was succesful
+
+-------------- 
+
+
+
+
+
+
+
+
+
+
+
+
+
