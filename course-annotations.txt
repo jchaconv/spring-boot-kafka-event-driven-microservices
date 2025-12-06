@@ -491,3 +491,34 @@ that can be consumed as bad messages to analyze those messages.
 
 - the test was successful
 
+
+****************************************************
+Section 12: Kafka Consumer - Exceptions and Retries
+****************************************************
+
+branch: feature/section12-kafka-consumer-exceptions-retries
+
+
+- if the bad message is not retryable then the message will be send to the DLT
+- but if the message is retryable then consume message again. that is possible with some configurations in the email-notif app.
+- if exception is Retryable, then:
+    - configure wait time
+    - number of times to retry
+
+- Creating retryable and not retryable exceptions in Kafka
+    - create exception classes
+    - edit consumer configuration
+    - test NotRetryableException
+        - edit ProductCreatedEventHandler. add a simple conditional to throw the NotRetryableException
+        - bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic product-created-events-topic-dlt --from-beginning
+        - test successful , the message was received in the dlt topic
+
+    - test retryableException
+        - new parameter in the error handler: new FixedBackOff(interval:5000, maxAttempts: 3)
+        - invoke rest service, add new bean in main application class
+        - add the restTemplate in ProductCreatedEventHandler
+        - use the mock-service http://localhost:8085/response/200 or http://localhost:8085/response/500
+        - the retryable 3 times in 5 seconds was successful. send the request with product-service and with mock service offline.
+        - tests were successful
+
+    
