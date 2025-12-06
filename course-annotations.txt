@@ -607,15 +607,60 @@ Multiple consumers consuming messages from Kafka topic
 
 -------------- 
 
+*************************************************
+Section 14: Kafka Consumer - Idempotent Consumer
+*************************************************
+
+branch: feature/section14-kafka-idempotent-consumer
+
+- Can process the same message multiple times without causing any side effects or data inconsistencies.
+- avoiding duplicate messages
+    - idempotent consumer
+    - idempotent producer
+    - transactions: all complete or nothing
+
+- Include a unique id into message header
+    - Edit ProductServiImpl adding ProducerRecord into createProduct()
+
+- Reading a unique id from message header
+    - Edit ProductCreatedEventHandler adding headers
+    - Adding database-related dependencies
 
 
+- Adding database-related dependencies
+    - add maven dependencies for h2 and jpa
+    - add connection properties
 
+- Create JPA Entity, Repository in package io
+- edit ProductCreatedEventHandler adding the save of the object into the database
+- mark with @Transactional because it made changes to the database. The use of this annotation
+  means that if it happens an error in the method every change made to the database will be undone with a rollback. 
 
+- Check if Kafka message was processed earlier
+    - add validation in the handler with the new repository method
 
+- Test the development:
+    - harcode the messageId in ProductServiceImpl
+    - send a request with product-service
+    - go to the h2 console:  localhost:8081/h2-console
+        - org.h2.Driver
+        - jdbc:h2:mem:testdb
+        - julio:julio
+    - check the records of the table
+    - send the same request
+    - the record has not impact in the database because already in the table
+    - then, comment the hardcode and use the dynamic messageId
+    -  h2 web console doesn't work but the validation is correct
+        - first with hardcoded value, the console show this: The event with id: 123 has already been processed
+        - then with random value in messageId: 
+    - as an alternative to see records on h2:
+        - mvn dependency:copy-dependencies
+        - java -cp .\target\dependency\h2-2.4.240.jar org.h2.tools.Shell
+            - url: jdbc:h2:mem:testdb
+            - driver: org.h2.Driver
+            - username: julio
+            - password: julio
 
-
-
-
-
+        - It is necessary more investigation to query the correct db becasue until here is empty, no table created.
 
 

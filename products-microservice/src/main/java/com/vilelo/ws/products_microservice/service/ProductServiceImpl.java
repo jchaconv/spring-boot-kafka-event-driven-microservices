@@ -3,6 +3,7 @@ package com.vilelo.ws.products_microservice.service;
 import com.vilelo.ws.core.ProductCreatedEvent;
 import com.vilelo.ws.products_microservice.rest.CreateProductRestModel;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -31,8 +32,16 @@ public class ProductServiceImpl implements ProductService {
 
         LOGGER.info("Before publishing a ProductCreatedEvent");
 
+        ProducerRecord<String, ProductCreatedEvent> record = new ProducerRecord<>(
+                "product-created-events-topic",
+                productId,
+                productCreatedEvent);
+        record.headers().add("messageId", UUID.randomUUID().toString().getBytes());
+        //record.headers().add("messageId", "123".getBytes());
+
         SendResult<String, ProductCreatedEvent> result =
-                kafkaTemplate.send("product-created-events-topic", productId, productCreatedEvent).get(); //sync
+                kafkaTemplate.send(record).get();
+                //kafkaTemplate.send("product-created-events-topic", productId, productCreatedEvent).get(); //sync
 
         LOGGER.info("Partition: " + result.getRecordMetadata().partition());
         LOGGER.info("Topic: " + result.getRecordMetadata().topic());
