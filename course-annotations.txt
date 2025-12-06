@@ -664,3 +664,46 @@ branch: feature/section14-kafka-idempotent-consumer
         - It is necessary more investigation to query the correct db becasue until here is empty, no table created.
 
 
+****************************************
+Section 15: Apache Kafka - Transactions 
+****************************************
+
+branch: feature/section15-kafka-transactions
+
+- All or nothing: all operations in kafka succeed or none of all take effect
+- exactly once: we want the kafka message deliver once and only once
+    - idempotent producer: duplicate messages are not sent
+    - transactions: ensures that consumer does not read message that is part of incomplete transaction
+
+    transfer.topic => transfer-service => withdrawals.topic => withdraw-service
+                       (consumer)      => deposit.topic     => deposit-service
+                       (producer)
+
+* problem of 2 withdraws and one deposit. example: i want to transfer 50 dollars. the application withdraw 50 + 50 dollars of my acc and deposit 50.
+
+- Imagine a transfer-service. Sometimes, this kind of service acts as both: consumer and producer
+- The service received a transfer message from transfer.topic and send the message to withdrawals.topic
+- there is another withdraw-service that consumes the message from withdrawals.topic and will withdraw the requested amount of money from user's acc.
+- the transfer-service failed during this process. So, to kafka(transfers.topic broker) the message is not considered as successfully consumed.
+- in this case, a new message is produce from the beginning, so, withdrawals.topic has two messages.
+- transfer-service will then produce another message to a different topic (deposits.topic) and deposit-microservice process this message
+- we want to avoid situations like this
+
+- With transactions we have this:
+    - We enable Kafka transactions on transfer-service so the following operations: withdrawals and deposits
+      will executed within one single transaction.
+    - the consumer services (withdraw and deposit) are configured to read only "commited messages"
+    - during the process the message is marked as "uncommited". the consumers not see this message.
+    - if an error ocurred with transfer-microservice the transaction is aborted and the message remains as "uncommited" in the topic
+    - the second time, a new message is send to deposits.topic also as "uncommited". If the method complete successfully
+      the messages are marked as "commited" and are ready to be consumed by consumer services.
+
+* Transactions help us write to multiple topics atomically and help us achieve all or nothing behavior.
+  If we need to write to multiple topics, then it is either all writes are successful or none of them are.
+
+  Note: there is another concept "Compensating transactions". Allows us to rollback or undo operations that span multiple remote services.
+  for example: if transfer-service need to write to a database outsite the transaction process, it will be a separate transaction.
+  
+  * Kafka doesn't manage database transactions.
+  * Spring provides good integration for manage kafka and database transactions. This integrations will help us to rollback both:
+    Kafka and database transactions.
