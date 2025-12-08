@@ -879,6 +879,17 @@ Test method structure. Arrange, Act and Assert
     - Test ok with configurations
 
 
+*************************************************
+Section 18: Integration Testing - Kafka Consumer
+*************************************************
+
+branch: feature/section18-integration-testing-kafka-consumer
+
+The test is in email-notif-service. ProductCreatedEventHandler class
+
+
+
+
 
 
 
