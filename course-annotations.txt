@@ -848,11 +848,35 @@ Section 17: Integration Testing - Kafka Producer
 
 branch: feature/section17-integration-testing-kafka-producer
 
+- Create a test integration from ProductServiceImpl
+- use EmbeddedKafka to not use the real kafka broker
+    - controlledShutdown: try to migrate all leaders on the broker to another before it shuts down.
+      don't use this property because it is deprecated and generate loops in tests.
+- @TestInstance: only one instance of the class for all the test methods
+- @DirtiesContext: indicates to spring context that is dirty it means some test can modify the state.
+  spring provide us a clean context with each test execution.
 
+-----------
 
+create empty test
 
+- name convention: test<System Under test>_Condition or state change_ExpectedResult
+- testCreateProduct_whenGivenValidProductDetails_successfulSendsKafkaMessage
+- run the empty test. with ide tools or command
+    - ./mvnw test -Dtest=[className]
+    - ./mvnw test -Dtest=[className]#[testMethod]
 
+-----------
 
+Test method structure. Arrange, Act and Assert
+
+    - arrange: initialize objects, prepare input data 
+    - act: invoke method under test using data in the arrange section
+    - assert: verify method under test executed successfully and it returned expected results
+
+    - create the properties file in test directory
+
+    - Test ok with configurations
 
 
 
