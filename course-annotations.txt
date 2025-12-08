@@ -876,6 +876,8 @@ Test method structure. Arrange, Act and Assert
 
     - create the properties file in test directory
 
+    - there is an intellij error (syntax error maybe i think) with EmbeddedKafkaBroker. But is not an issue when I run the test.
+    
     - Test ok with configurations
 
 
