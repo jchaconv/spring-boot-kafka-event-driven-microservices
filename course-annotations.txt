@@ -889,7 +889,30 @@ branch: feature/section18-integration-testing-kafka-consumer
 
 The test is in email-notif-service. ProductCreatedEventHandler class
 
+- @SpringBootTest simulates spring context
+- ProducerRecord is to simulate the kafka message
+- @MockitoSpyBean i want to keep the original behavior of ProductCreatedEventHandler, and still
+  be able to intercept method calls and perform additional verification.
 
+in the video this was added in case of error, this error:
+    Actually, there were zero interactions with this mock.
+    Wanted but not invoked:
+    productCreatedEventHandler.handle(
+        <Capturing argument: ProductCreatedEvent>,
+        <Capturing argument: String>,
+        <Capturing argument: String>
+    );
+    add this:
+        kafkaconsumerconfiguration: ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, env.getproperty
+        spring.kafka.consumer.auto-offset-reset=earliest
+        
+        * there are multiple options
+
+        * tells consumer where to start Reading message from a partition when it joins consumer group
+        if it is set to earliest, then consumer will start reading from the beginning of the partition
+        latest(default value) from the end of the topic
+        
+- test was successful!
 
 
 
