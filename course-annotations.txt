@@ -707,3 +707,71 @@ branch: feature/section15-kafka-transactions
   * Kafka doesn't manage database transactions.
   * Spring provides good integration for manage kafka and database transactions. This integrations will help us to rollback both:
     Kafka and database transactions.
+
+--------------------------
+
+Setup different microservices
+
+    consumers: withdrawals and deposit services.
+
+    * transfer-service
+        spring.kafka.producer.transaction-id-prefix=transfer-service-${random.value}-
+        logging.level.org.springframework.kafka.transaction=TRACE
+        logging.level.org.springframework.transaction=TRACE
+
+        - new prop in producer config TRANSACTIONAL_ID_CONFIG
+        - @Transactional in ServiceImpl for the integration between spring and kafka
+            - it is possible to specify the manager of the transaction component
+            - in this case if the callRemoteService fails, then the consumer services don't receive the messages
+
+--------------------------
+
+Rollback transaction for specific exception
+
+    - @Transactional performs a rollback when ocurrs Unchecked exceptions(RuntimeExceptions) and error(by default). That means no rollback for any kind of exception.
+    - No rollback for Checked exceptions
+    - it can be configure like this:
+        - rollbackFor = Throwable.class   ---> something very general
+        - rollbackFor = {TransferServiceException.class, ConnectException.class}  ---> more specific
+        - noRollbackFor = {IndexOutOfBoundsException.class}
+    - this specific configuration doesn't override the default configuration (RuntimeException and Errors). It is just to make sure to perform a rollback in these cases.
+    - if there is only one transaction manager it is ok to have the default configurations, just @Transactional and nothing more
+
+--------------------------
+
+Reading committed messages in Kafka Consumer
+
+    - in consumer services set this prop:
+        - spring.kafka.consumer.isolation-level=READ_COMMITTED
+
+    - set the isolation prop in KafkaConsumerConfig
+
+--------------------------
+
+Test the development:
+
+    - start kafka server (3 recommended, I use just one)
+    - start services, including mock services
+    - send a request with transfer service: POST http://localhost:8086/transfers
+    - body:
+        {
+            "senderId": "123",
+            "recepientId": "124",
+            "amount": 5589
+        }
+    - test success case [OK]
+    - test connection refused with mock service off [OK]
+    - test when mock service returns and exception(invoke with /500) [OK]
+    - check the logs with "KafkaTransactionManager" [OK]
+
+    - tests successful
+
+--------------------------
+
+
+
+
+
+
+
+
