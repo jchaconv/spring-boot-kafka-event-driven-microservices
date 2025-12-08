@@ -840,3 +840,40 @@ The test is the same as the section before.
         - Same result in both cases. All is good.
 
     - Tests successful!
+
+
+*************************************************
+Section 17: Integration Testing - Kafka Producer
+*************************************************
+
+branch: feature/section17-integration-testing-kafka-producer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
