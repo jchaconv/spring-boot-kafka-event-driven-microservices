@@ -736,6 +736,8 @@ Rollback transaction for specific exception
         - noRollbackFor = {IndexOutOfBoundsException.class}
     - this specific configuration doesn't override the default configuration (RuntimeException and Errors). It is just to make sure to perform a rollback in these cases.
     - if there is only one transaction manager it is ok to have the default configurations, just @Transactional and nothing more
+    - It doesn't matter where specifically the exception ocurrs, it could be at the beginning, mid or end of the method. If an exception ocurr inside the Transactional method
+      then it will be a rollback to perform by the spring configuration.
 
 --------------------------
 
@@ -768,9 +770,17 @@ Test the development:
 
 --------------------------
 
+Apache Kafka local transactions with KafkaTemplate
 
+    - configuration with kafkaTemplate
+    - allows you to do atomic writes to multiple topics and partitions
+    - either all messages will be succesfully written or none of them will be
 
-
+    - executeInTransaction (lambda function)
+    - If I have a method and an exception happens after the lambda function there won't be a rollback
+      because this is a local scope function. It doesn't matter if the method is marked with @Transactional annotation,
+      if the local transaction function terminates successfully, then there is no place to a rollback. 
+    - Double transaction declaration is just an example, it won't be necessary in a real case.
 
 
 
