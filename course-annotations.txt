@@ -783,5 +783,60 @@ Apache Kafka local transactions with KafkaTemplate
     - Double transaction declaration is just an example, it won't be necessary in a real case.
 
 
+***************************************************
+Section 16: Apache Kafka and Database Transactions 
+***************************************************
 
+branch: feature/section16-kafka-and-database-transactions
 
+- KafkaTransactionManager and JpaTransactionManager
+- Changes in TransferService
+    - properties
+    - io package with entity and repository classes
+    - edit KafkaConfig adding a name to the bean of the KafkaTransactionalManager
+    - edit TransferServiceImpl adding the bean name to Transactional annotation
+
+- I need to create another transaction because KafkaTransactionManager does not manage database transactions.
+- by default spring looks for transactionManager, so I just need to declare that name in the jpa bean for transaction.
+
+- By the end of this lecture, you added @Bean("transactionManager") and @Bean("kafkaTransactionManager"). You said Spring will
+use "transactionManager" to manage both Kafka and JPA transactions. But we haven't written any code to bind @Bean("transactionManager")
+with @Bean("kafkaTransactionManager"). When does this binding happen? Did I miss something?
+
+    Once you start using @Transactional annotation with Java code that stores data to a database, Spring starts looking for database 
+    ransaction manager. If it finds two transaction managers in Spring application context, it needs to figure out which one two use 
+    for Kafka Transactions and which one to use for JPA Transactions. If you don't provide an explicit name transactionManager to a
+    jpaTransactionManager, it will throw exception, because I can't figure out which transaction manager to use for database transactions.
+
+* In few words, the name "transactionManager" in the Bean is necessary because spring use it to automatically choose which is the appropiate
+manager to use for kafka and database transactions.
+
+* Put the generic name "transactionManager" to your db manager. The kafka manager name still remains.
+
+---------------------------
+
+Synchronized Transaction: Saving to database
+
+    - add logic the serviceImpl and declare the "transactionManger" as the bean object of @Transactional
+
+Enable logging for Kafka and Jpa Transaction Managers
+
+    - edit logging properties
+
+The test is the same as the section before.
+
+    - h2 console is working in this transfer service  localhost:8086/h2-console on edge browser
+    - put the correct connection details and run query's. console works successful
+    - I describe what I saw in logs:
+        - The JpaTransactionManager is active and working
+            - Committing JPA transaction on EntityManager
+        - Also TransactionManager is operative
+    - records are ok in the table with success case
+
+    - testing the failed connection and error 500. Logs:
+        - Rolling back JPA transaction on EntityManager
+        - No messages received by the consumer apps
+        - No record registered in the table
+        - Same result in both cases. All is good.
+
+    - Tests successful!
