@@ -1,0 +1,17 @@
+com\appsdeveloperblog\core\dto\commands\ApproveOrderCommand.class
+com\appsdeveloperblog\core\dto\events\ProductReservationFailedEvent.class
+com\appsdeveloperblog\core\exceptions\CreditCardProcessorUnavailableException.class
+com\appsdeveloperblog\core\dto\CreditCardProcessRequest.class
+com\appsdeveloperblog\core\dto\events\ProductReservedEvent.class
+com\appsdeveloperblog\core\dto\Shipment.class
+com\appsdeveloperblog\core\dto\events\OrderCreatedEvent.class
+com\appsdeveloperblog\core\dto\Product.class
+com\appsdeveloperblog\core\types\OrderStatus.class
+com\appsdeveloperblog\core\dto\commands\ProcessPaymentCommand.class
+com\appsdeveloperblog\core\dto\events\PaymentProcessedEvent.class
+com\appsdeveloperblog\core\dto\Payment.class
+com\appsdeveloperblog\core\exceptions\ProductInsufficientQuantityException.class
+com\appsdeveloperblog\core\dto\commands\ReserveProductCommand.class
+com\appsdeveloperblog\core\dto\Order.class
+com\appsdeveloperblog\core\dto\events\OrderApprovedEvent.class
+com\appsdeveloperblog\core\dto\events\PaymentFailedEvent.class

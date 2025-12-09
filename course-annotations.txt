@@ -966,8 +966,32 @@ it just work with multiple microservices publishing events that may trigger the 
 A simplified example of the Ordering system.
 The focus is on Saga(orchestration-based) only
 
+The code was already done for all the projects.
 
+- docker compose up  ---> kafka server. command doesn't work.
+- start product service
+    POST localhost:8081/products
+        {
+            "name": "iphone 15",
+            "price": 2899,
+            "quantity": 1
 
+        }
+- start order service
+    POST localhost:8080/orders
+        {
+            "productId": "id from the previous response",
+            "productQuantity": 1,
+            "customerId": "any value"
+
+        }
+- start a console consumer and see the message.
+
+--------------
+
+order-service has the Saga class.
+this section is not motivating because most of the code already there.
+I think I can use this application to understand the pattern and see how these microservices interact with each other. 
 
 
 
