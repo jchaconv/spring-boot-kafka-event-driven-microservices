@@ -915,6 +915,56 @@ in the video this was added in case of error, this error:
 - test was successful!
 
 
+*************************************************
+Section 19: Saga design patter with Apache Kafka
+*************************************************
+
+branch: feature/section19-saga-design-pattern-with-kafka
+
+* I'm adding the folder documentation with the necessary docs.
+
+- In the context of microservices, Saga is a sequence of local transactions.
+
+---------------
+
+Choreography Saga Pattern:
+
+- Does not have an orchestrator. Just multiple microservices communicating between them through the Kafka broker.
+
+- Each local transaction publishes an event that may trigger the next local transaction in the saga. There is no central coordinator.
+
+- Compensating transactions are operations that microservices need to perform
+  to undo the modifying changes that were done in our systems.
+- They are perfomred in the reverse order.
+
+------------
+
+Orchestration Saga Pattern:
+
+- In the Orchestration Saga pattern a central orchestrator is responsible for coordinating the steps of a distributed transaction.
+
+- more suitable for complex business transactions that require centralized control and decision making
+
+- Saga class acts as an orchestrator. Is a manager of the flow.
+- Imagine a product marked as reserved. Other customers can't see that product.
+  If the flow cannot be completed at some point, it is necessary to perform a rollback.
+- Compensating events take place in the reverse process.
+
+- What happens if the Compensating transactions also failed at some point?
+
+-----------
+
+What is the primary difference between Orchestration and Choreography in a microservices architecture?
+
+I think the main difference is that Orchestration uses a Saga class acting as orchestrator, this is more suitable when you have
+multiple complex business transactions that require more control. Furthermore, Choreography doesn't need a central orchestrator,
+it just work with multiple microservices publishing events that may trigger the next local transaction.
+
+
+-----------
+
+A simplified example of the Ordering system.
+The focus is on Saga(orchestration-based) only
 
 
 
