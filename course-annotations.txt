@@ -994,10 +994,36 @@ this section is not motivating because most of the code already there.
 I think I can use this application to understand the pattern and see how these microservices interact with each other. 
 
 
+*************************************************
+Section 20: Saga part2. Compensating transactions
+*************************************************
+
+branch: feature/section20-saga-compensating-transactions
+
+Handle CancelProductReservationCommand
+
+- is a good practice to add a history table
+- add handleEvent to the rollback events
+- add dto for cancel reservation in core project -> then mvn install
+- complete the handleEventMethod
+- edit ProductCommandsHandler
+
+Publish ProductReservationCancelledEvent
+
+- add event in core project -> mvn install
+- complete the handleCommand in ProductCommandsHandler
+
+Handle ProductReservationCancelledEvent
+
+- Add the handleEvent in OrderSaga with a new command.
 
 
+Handle the RejectOrderCommand
 
-
+- OrderCommandsHandler, add method
+- implement the orderService rejectOrder
+- with all those changes start all microservices and test.
+- sjutdown a service to test the rollback
 
 
 
