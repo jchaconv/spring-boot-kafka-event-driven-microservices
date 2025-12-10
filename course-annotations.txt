@@ -1027,13 +1027,32 @@ Handle the RejectOrderCommand
 
 
 
+***************************************
+Section 21. Kafka in Docker Containers
+***************************************
+
+branch: feature/section21-kafka-in-docker-containers
+
+to configure the env variable on dns(to use on the host machine):
+c/windows/system32/drivers/etc
+access to the host file and add this line:
+127.0.0.1 host.docker.internal
 
 
+docker-compose -f docker-compose.yml --env-file environment.env up
 
+go to /usr/bin folder using an exec command to access to the container files
 
+check the port of the container
 
+execute kafka scripts
 
+create topic and use this at the final of the command:
+--bootstrap-server host.docker.internal:9092    --> use the env variable of the env file
 
+---------------
 
+Running the three kafka servers with the updated compose.yml file
+docker-compose -f docker-compose.yml --env-file environment.env up   ---> the same command as before
 
 
