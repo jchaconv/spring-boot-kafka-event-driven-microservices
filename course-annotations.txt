@@ -2,7 +2,7 @@
 Course: Apache Kafka for Event-Driven Spring Boot Microservices
 
 Start: 28/11/2025
-
+End: 10/12/2025
 
 ****************************************
 Section 1: Introduction to Apache Kafka
@@ -1054,5 +1054,38 @@ create topic and use this at the final of the command:
 
 Running the three kafka servers with the updated compose.yml file
 docker-compose -f docker-compose.yml --env-file environment.env up   ---> the same command as before
+
+
+
+**************************
+Section 22. Kafka Connect
+**************************
+
+branch: feature/section22-kafka-connect
+
+Is a free tool that helps you move data between kafka and other systems, like databases or file storage.
+Use it when you need to continuosly move data between Kafka and external systems.
+When you want to avoid writing custom integration code.
+real-time, relaible pipelines between systems.
+
+Source: databases, aws, azure, csv, json, salesforce, etc.
+
+It has JDBC, Files, ActiveMQ Connectors.
+
+
+Kafka Cluster
+    - Worker 1,2,3,..
+    - Source Connector [task1, task2]
+    - Sink Connector [task1, task2]
+    - Topics
+
+Task
+    - SourceRecord
+    - Transform
+    - Converter
+
+
+
+
 
 
